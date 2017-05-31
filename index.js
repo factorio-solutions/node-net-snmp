@@ -1377,6 +1377,16 @@ function walkCb (req, error, varbinds) {
 		if (! done)
 			oid = varbinds[0][varbinds[0].length - 1].oid;
 	} else {
+		for (var i = 0; i < varbinds.length; i++) {
+			if (varbinds[i].type == ObjectType.EndOfMibView) {
+				error = new ResponseInvalidError ("OID '"
+							+ varbinds[i].oid + "' in response at "
+							+ "positiion '" + i + "' has invalid type EndOfMibView with SNMP version 1");
+				req.doneCb(error)
+				return
+			}
+		}
+		
 		if (! done) {
 			if (req.feedCb (varbinds)) {
 				done = 1;
